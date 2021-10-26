@@ -303,7 +303,7 @@ decomp_type     PCA
 
 \section{Unsolved Challenges}
 
-\begin{frame}[fragile]\frametitle{Slow Speed, Wrong Answers}
+\begin{frame}\frametitle{Slow Speed, Wrong Answers}
 {\small 
 \vspace{-3ex}
 
@@ -337,15 +337,39 @@ Option Pricing  & Track Fourier Coef.\ Lattice \cite{JimHic16a} &&& $2^{12}$ & $
 }
 \end{frame}
 
-
 \begin{frame}[fragile]\frametitle{Checking the Gaussian Process Assumption}
 
+\vspace{-3ex}
+If $\bigl(f(\vx_1), \ldots, f(\vx_n)\bigr) ^T$ has a known multivariate Gaussian distribution, then the correct transformation of this data has a standard univariate Gaussian distribution
+
+Here are some QQ plots for the Keister example
+
+\centerline{\includegraphics[width=0.35\textwidth]{figures/Keister-QQPlot_n-64_d-3_case-7.eps} \hspace{-3ex}
+	\includegraphics[width=0.35\textwidth]{figures/Keister-QQPlot_n-64_d-3_case-1.eps} \hspace{-3ex}
+	\includegraphics[width=0.35\textwidth]{figures/Keister-QQPlot_n-64_d-3_case-2.eps}}
+
+Should we be concerned?
 
 \end{frame}
 
 
 
 
+\begin{frame}\frametitle{Summary}
+	
+\vspace{-5ex}
+	
+\begin{itemize}
+	\item Bayesian cubature using credible intervals as stopping criteria often gives correct answers
+	
+	\item Matching sampling sites (designs) with covariance kernels expedites the computation
+	
+	\item Tuning the hyperparameters can add significant computational load
+	
+	\item Challenges of speeding the computation and finding the right kernels or hyperparameters still remail
+\end{itemize}
+	
+\end{frame}
 
 
 
