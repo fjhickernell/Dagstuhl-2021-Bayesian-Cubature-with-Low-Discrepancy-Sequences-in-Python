@@ -55,7 +55,7 @@
 \DeclareMathOperator{\app}{APP}
 \DeclareMathOperator{\alg}{ALG}
 \DeclareMathOperator{\ACQ}{ACQ}
-\DeclareMathOperator{\ERR}{ERR}
+\DeclareMathOperator{\ERR}{err}
 \DeclareMathOperator{\COST}{COST}
 \DeclareMathOperator{\COMP}{COMP}
 \newcommand{\dataN}{\bigl(\hf(\vk_i)\bigr)_{i=1}^n}
@@ -94,10 +94,11 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 	\href{http://mypages.iit.edu/~hickernell}{\url{mypages.iit.edu/~hickernell}}}
 
 \thanksnote{Thanks to the GAIL and QMCPy teams \\
-	Thanks to the organizers, especially during these unusual times \\[2ex]
-	Slides at  \href{https://speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}{\nolinkurl{speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}}}
+	Thanks to the organizers, especially during these unusual times \\
+	Disclosure: I am multicultural (computational mathematician \& statistician)\\[2ex]
+	Slides at  \href{https://speakerdeck.com/fjhickernell/dagstuhl-bayesian-cubature-ld-qmcpy}{\nolinkurl{speakerdeck.com/fjhickernell/dagstuhl-bayesian-cubature-ld-qmcpy}}}
 
-\event{Dagstuhl 2021}
+\event{Probabilistic Numerics @ Dagstuhl}
 \date[]{October 27, 2021}
 
 \input FJHDef.tex
@@ -147,42 +148,98 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 	
 	\begin{itemize}
 		\item Assume $f \sim \GP(m,s^2 C_\vtheta)$
-		\item<3-> \alert<3>{Choose $C_\vtheta$ and $\vx_1, \vx_2, \ldots$ for a fast eigenvector-eigenvalue decomposition of the Gram matrix $\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n$}  (see also Kanagawa, Sh\"afer)
+		\item<3-> \alert<3>{Choose $C_\vtheta$ and $\vx_1, \vx_2, \ldots$ for a fast eigenvector-eigenvalue decomposition of the Gram matrix $\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n$}; this is a \alert<3>{practical} choice, rather than informed by $f$  (see also Kanagawa, Sh\"afer, Wenger)
 		\item Sample $f$ at $\vx_1, \ldots, \vx_n$
-		\item<2-> \alert<2>{Tune the hyperparameters so that $f$ is not an outlier}
+		\item<2-> \alert<2>{Tune the hyperparameters by empirical Bayes so that $f$ is not an outlier}
 		\item Construct a credible interval for $\mu$ in terms of the posterior mean $\hmu_n$
 		\item Increase $n$ until the half-width is no greater than $\varepsilon$
-		\item<4-> \alert<4>{Implement in software, such as GAIL \cite{ChoEtal21a} and QMCPy \cite{QMCPy2020a}} (see also Naslidynk, Pleiss, ProbNum)
+		\item<4-> \alert<4>{Implement in software:  GAIL \cite{ChoEtal21a} and QMCPy \cite{QMCPy2020a}} (see also Naslidynk, Pleiss, ProbNum)
 	\end{itemize}
 	
 \end{frame}
 
-\section{Matched Data Sites and Covariance Kernels}
+\section{Matched Data Sites \& Covariance Kernels}
 
-\begin{frame}{Low Discrepancy Sequences}
-    
+\begin{frame}{Low Discrepancy (LD) Sequences}
+	
+\vspace{-3ex}
+	
+\only<1>{IID sequences have \alert{clusters and gaps}
+	
+	\includegraphics[width = \textwidth]{figures/dd_IID_Uniform.eps}
+}
+\only<2>{LD lattice sequences are more even than IID
+	\includegraphics[width = \textwidth]{figures/dd_Lattice.eps}
+	
+	\vspace{-7ex}
+\[
+C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K(\vt) = \prod_{k=1}^d\bigl[ 1  +  \eta_k  (-1)^{r+1} \underbrace{B_{2r}(t_k)}_{\substack{\text{Bernoulli}\\ \text{polynomial}}} \bigr], \quad \vtheta = (r,\veta)
+\]	
+}
+\only<3>{LD digital sequences (such as Sobol') are more even than IID
+	\includegraphics[width = \textwidth]{figures/dd_Sobol.eps}
+	
+	\vspace{-7ex}
+	\[
+	C_\vtheta(\vt,\vx) = K_\vtheta(\vt \underbrace{\ominus}_{\substack{\text{digitwise}\\ \text{subtraction}}} \vx ), \qquad \text{e.g., }K(\vt) = \prod_{k=1}^d\bigl[ 1+ \eta_k \underbrace{\omega(t_k)}_{\text{explicit}}\bigr], \quad \vtheta = (r,\veta)
+	\]	
+}
+
 \end{frame}
 
-\begin{frame}{Eigenvector-Eigenvalue Decomposition of the Gram Matrix}
+\begin{frame}{\only<1>{Eigenvector-Eigenvalue Decomposition of the Gram Matrix}\only<2->{Tuning Hyperparameters and the Credible Interval}}
 	For these matched data sites and covariance kernels
 	\begin{gather*}
-		\int_{[0,1]^d} C_\vtheta(\vt,\vx) \, \dif \vt = 1 \quad \forall \vx \in [0,1]^d \\
-		\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n= \bigl( \vC_1, \ldots, \vC_n) = \mV \mLambda_\vtheta \mV^T, \\
-	  \mV \text{ explict, (complex exponential or Hadamard)}, \qquad \vV_1 = \vone \\
-	  \vb \mapsto \tvb := \mV^H \vb \text{ is FFT/FHWT} \Order (n \log n), \qquad \vlambda := \diag(\mLambda_\vtheta) = \mV^H \vC_1, 
+		\only<1-2>{\int_{[0,1]^d} C_\vtheta(\vt,\vx) \, \dif \vt = 1 \quad \forall \vx \in [0,1]^d, \qquad
+		\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n= \bigl( \vC_{\vtheta 1}, \ldots, \vC_{\vtheta n}) =\frac 1n  \mV \mLambda_\vtheta \mV^H\\
+	  \mV \text{ \alert{explict}, (complex exponential or Hadamard)}, \qquad \vV_1 = \vone \\}
+	  \vb \mapsto \tvb := \mV^H \vb \text{ is \alert{FFT/FHWT} } \Order (n \log n), \qquad \vlambda_\vtheta := \diag(\mLambda_\vtheta) = \mV^H \vC_{\vtheta 1}, 
 	\end{gather*} 
-\uncover<2->{which leads to the approximation and credible interval:}
+\uncover<2->{which leads to the approximation and credible interval:
+\begin{gather*}
+	\hmu = \ty_1 = \frac 1n \sum_{i=1}^n f(\vx_i) = \text{sample mean of function values}, \qquad \vy = \bigl(f(\vx_1), \ldots, f(\vx_n) \bigr)^T \\
+\Prob \bigl [\abs{\mu - \hmu} \le \ERR\bigr ] = 99\%,  \qquad 
+\ERR = \frac{2.58}{n} \sqrt{ \sum_{i = \alert{2}}^n \frac{\lvert \ty_i \rvert^2}{\lambda_{\vtheta i}} \left(1 - \frac{n}{\lambda_{\vtheta 1}} \right)} 
+\only<3>{ \\
+\vtheta_{\text{opt}} =  \argmin_{\vtheta} \left [ \log \left( \sum_{i=\alert{2}} \frac{\lvert \ty_i \rvert^2}{\lambda_{\vtheta i}}\right)   + \frac 1n \sum_{i=1}^n \log(\lambda_{\vtheta i} )  \right ]
+}
+\end{gather*}
+}
 
+\end{frame}
+	
+\section{QMCPy}
+
+\begin{frame}{Our Methods Bayesian Stopping Criteria into Software}
+	
+	\vspace{-3ex}
+	
+	Our research on stopping criteria (Bayesian and otherwise) has been implemented in two libraries:
+	\begin{itemize}
+		\item GAIL \cite{ChoEtal21a} MATLAB library (born in 2013)
+		\item QMCPy \cite{QMCPy2020a} Python library (born in2019)
+	\end{itemize}
+Our goals are to provide software that 
+\begin{itemize}
+	\item Includes the best (mostly QMC) algorithms available
+	\item Is well-tested
+	\item Is easy to use, gives practitioners an easy on-ramp
+	\item Provides use cases for algorithm developers 
+	\item Plays well with other packages
+\end{itemize}
+	
 	
 \end{frame}
-
-\begin{frame}{Tuning Hyperparameters Given Eigenvalues and Eigenvectors}
 	
-\end{frame}
 
-\begin{frame}[fragile]\frametitle{Examples in QMCPy}
+\begin{frame}[fragile]\frametitle{Keister Example in QMCPy}
+	\vspace{-5ex}
+	\[
+	\mu = \int_{\reals^d} \cos(\norm{\vt}) \exp(-\norm{\vt}^2) \, \dif \vt = \int_{[0,1]^d} f(\vx) \; \dif \vx =  ? \qquad \text{Keister \cite{Kei96}}
+	\]
 \noindent\begin{minipage}{0.47\textwidth}
 \begin{lstlisting}[style=Python]
+d = 5; tol = 1e-2
 lattice = Lattice(dimension=d, order='linear')
 integrand = Keister(lattice)
 solution,data = CubBayesLatticeG(integrand, abs_tol=tol, ptransform = 'none').integrate()
@@ -192,58 +249,107 @@ print(data)
 \qquad
 \begin{minipage}{0.47\textwidth}
 \begin{lstlisting}[style=Python]
-solution        1.127
+solution        1.136
 error_bound     0.009
 n_total         1024
-time_integrate  0.690
+time_integrate  0.725
 abs_tol         0.010
 rel_tol         0
 n_init          2^(8)
 n_max           2^(22)
-order           2^(1)
 \end{lstlisting}
 \end{minipage} 
 
 \end{frame}
 
 
-\begin{frame}[fragile]\frametitle{Examples in QMCPy}
+\begin{frame}[fragile]\frametitle{Asian Option Pricing Example in QMCPy}
+	\vspace{-5ex}
+	\[
+	\text{option price} = \mu = \int_{\reals^d} \text{payoff}(\vz) \; \text{discrete BM PDF}(\vz)   \, \dif \vz = \int_{[0,1]^d} f(\vx) \; \dif \vx  = ? \quad \text{Glasserman  \cite{Gla03}}
+	\]
+\noindent\begin{minipage}{0.52\textwidth}
+\begin{lstlisting}[style=Python]
+volatility=.5; interest_rate =.01
+start_price = 30; strike_price = 25
+t_final = 1; call_put = 'call'
+mean_type = 'arithmetic'
+d = 4; abs_tol = .01
+integrand = AsianOption(Lattice(d, order = 'linear'), volatility, start_price, strike_price, interest_rate, t_final, call_put, mean_type)
+solution,data = CubBayesLatticeG(integrand,abs_tol=abs_tol).integrate()
+print(data)
+\end{lstlisting}
+\end{minipage} 
+\qquad
+\begin{minipage}{0.42\textwidth}
+\begin{lstlisting}[style=Python]
+solution        6.235
+error_bound     0.007
+n_total         2048
+time_integrate  1.470
+abs_tol         0.010
+rel_tol         0
+time_vec        [0.25 0.5  0.75 1.  ]
+covariance      [[0.25 0.25 0.25 0.25]
+[0.25 0.5  0.5  0.5 ]
+[0.25 0.5  0.75 0.75]
+[0.25 0.5  0.75 1.  ]]
+decomp_type     PCA
+\end{lstlisting}
+\end{minipage} 
 	
-\begin{tabular}{p{0.47\textwidth}p{0.47\textwidth}}
-\begin{lstlisting}[style=Python]
-lattice = Lattice(dimension=d, order='linear')
-\end{lstlisting}
-&
-\begin{lstlisting}[style=Python]
-lattice = Lattice(dimension=d, order='linear')
-\end{lstlisting}
+\end{frame}
+
+
+\section{Unsolved Challenges}
+
+\begin{frame}[fragile]\frametitle{Slow Speed, Wrong Answers}
+{\small 
+\vspace{-3ex}
+
+Computations \href{https://colab.research.google.com/drive/1KrlrtLu7j8Ff7YsSJjPMiGUr-UKfqwxm?usp=sharing}{\beamergotobutton{here}}
+
+\vspace{-3ex}
+\begin{center}
+{\footnotesize
+\begin{tabular}{rccccl}
+	Example & Stopping Criterion & $d$ & Absolute Tolerance & $n$ & Time \\ \toprule
+	Keister & Bayesian Lattice \cite{RatHic19a} & $5$ & $0.01$ & $2^{10}$ & $0.943$ s \\
+	Keister & Bayesian Sobol' \cite{JagHic22a} &&&  $2^{12}$ & $0.102$ s \\
+	Keister & Track Fourier Coef.\ Lattice \cite{JimHic16a} &&& $2^{13}$ & $0.024$ s \\
+	Keister & Track Fourier Coef.\  Sobol' \cite{HicJim16a} &&& $2^{13}$ & $0.012$ s \\ \midrule
+	Keister & Bayesian Lattice \cite{RatHic19a} & $5$ & $0.001$ &  & \alert{$> 10$ m} \\
+	Keister & Track Fourier Coef.\ Lattice \cite{JimHic16a} &&& $2^{17}$ & $0.388$ s \\ \toprule
+Option Pricing  & Bayesian Lattice \cite{RatHic19a} & $4$ & $0.01$ & $2^{10}$ & $1.347$ s \\
+Option Pricing  & Track Fourier Coef.\ Lattice \cite{JimHic16a} &&& $2^{12}$ & $0.021$ s \\ \midrule
+Option Pricing  & Bayesian Lattice \cite{RatHic19a} & $13$ & $0.01$ & \multicolumn{2}{c}{\alert{wrong answer}}\\
+Option Pricing  & Track Fourier Coef.\ Lattice \cite{JimHic16a} &&& $2^{12}$ & $0.034$ s \\ \bottomrule
 \end{tabular}
+}
+\end{center}
+\vspace{-3ex}
+\begin{itemize}
+	\setlength{\itemsep}{-0.5ex}
+	\item Computational load in \alert{optimizing} for the kernel parameters
+	\item \alert{Inefficient} code
+	\item The speed may not be a problem if function evaluation is \alert{expensive}
+\end{itemize}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Checking the Gaussian Process Assumption}
+
 
 \end{frame}
 
 
-\begin{frame}[fragile]\frametitle{Examples in QMCPy}
-
-\noindent\begin{lstlisting}[style=Python]
-lattice = Lattice(dimension=d, order='linear')
-\end{lstlisting}
-
-\end{frame}
-
-
-\begin{frame}{Challenges in Hyperparameter tuning}
-	
-\end{frame}
-
-\begin{frame}{Is the Gaussian Process Assumption Realistic?}
-	
-\end{frame}
 
 
 
 
 
-\finalthanksnote{These slides are  available at \\  \href{https://speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}{\nolinkurl{speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}}}
+\finalthanksnote{These slides are  available at \\  \href{https://speakerdeck.com/fjhickernell/dagstuhl-bayesian-cubature-ld-qmcpy}{\nolinkurl{speakerdeck.com/fjhickernell/dagstuhl-bayesian-cubature-ld-qmcpy}}}
 
 
 \thankyouframe
