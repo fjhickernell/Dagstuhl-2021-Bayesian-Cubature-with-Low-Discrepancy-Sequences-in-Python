@@ -22,10 +22,29 @@
 \addbibresource{FJH23.bib}
 \usepackage{newpxtext}
 \usepackage[euler-digits,euler-hat-accent]{eulervm}
-\usepackage{media9}
-\usepackage[autolinebreaks]{mcode}
+%\usepackage{media9}
+%\usepackage[autolinebreaks]{mcode}
 \usepackage[tikz]{mdframed}
 \usepackage{multicol}
+
+\usepackage{listings}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\lstdefinestyle{Python}{
+	%xleftmargin = -1.7in,
+	showstringspaces=false,
+	language        = Python,
+	basicstyle      = \small\ttfamily,
+	morekeywords = {as},
+	keywordstyle    = \color{blue},
+	stringstyle     = \color{darkgreen},
+	commentstyle    = \color{darkgreen}\ttfamily,
+	breaklines = true,
+	postbreak=\text{$\hookrightarrow$\space},
+	% style >>> and ... 
+	%   see: https://tex.stackexchange.com/questions/326655/make-a-keyword-in-listings-enviorment
+	alsoletter = {>,.} ,
+	morekeywords = [2]{>>>,...},
+	keywordstyle = [2]\color{cyan}\bfseries}
 
 
 \usetheme{FJHSlimNoFoot169}
@@ -138,11 +157,90 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 	
 \end{frame}
 
-\section{Matched Data Sites and Kernels}
+\section{Matched Data Sites and Covariance Kernels}
 
 \begin{frame}{Low Discrepancy Sequences}
     
 \end{frame}
+
+\begin{frame}{Eigenvector-Eigenvalue Decomposition of the Gram Matrix}
+	For these matched data sites and covariance kernels
+	\begin{gather*}
+		\int_{[0,1]^d} C_\vtheta(\vt,\vx) \, \dif \vt = 1 \quad \forall \vx \in [0,1]^d \\
+		\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n= \bigl( \vC_1, \ldots, \vC_n) = \mV \mLambda_\vtheta \mV^T, \\
+	  \mV \text{ explict, (complex exponential or Hadamard)}, \qquad \vV_1 = \vone \\
+	  \vb \mapsto \tvb := \mV^H \vb \text{ is FFT/FHWT} \Order (n \log n), \qquad \vlambda := \diag(\mLambda_\vtheta) = \mV^H \vC_1, 
+	\end{gather*} 
+\uncover<2->{which leads to the approximation and credible interval:}
+
+	
+\end{frame}
+
+\begin{frame}{Tuning Hyperparameters Given Eigenvalues and Eigenvectors}
+	
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Examples in QMCPy}
+\noindent\begin{minipage}{0.47\textwidth}
+\begin{lstlisting}[style=Python]
+lattice = Lattice(dimension=d, order='linear')
+integrand = Keister(lattice)
+solution,data = CubBayesLatticeG(integrand, abs_tol=tol, ptransform = 'none').integrate()
+print(data)
+\end{lstlisting}
+\end{minipage} 
+\qquad
+\begin{minipage}{0.47\textwidth}
+\begin{lstlisting}[style=Python]
+solution        1.127
+error_bound     0.009
+n_total         1024
+time_integrate  0.690
+abs_tol         0.010
+rel_tol         0
+n_init          2^(8)
+n_max           2^(22)
+order           2^(1)
+\end{lstlisting}
+\end{minipage} 
+
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Examples in QMCPy}
+	
+\begin{tabular}{p{0.47\textwidth}p{0.47\textwidth}}
+\begin{lstlisting}[style=Python]
+lattice = Lattice(dimension=d, order='linear')
+\end{lstlisting}
+&
+\begin{lstlisting}[style=Python]
+lattice = Lattice(dimension=d, order='linear')
+\end{lstlisting}
+\end{tabular}
+
+\end{frame}
+
+
+\begin{frame}[fragile]\frametitle{Examples in QMCPy}
+
+\noindent\begin{lstlisting}[style=Python]
+lattice = Lattice(dimension=d, order='linear')
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}{Challenges in Hyperparameter tuning}
+	
+\end{frame}
+
+\begin{frame}{Is the Gaussian Process Assumption Realistic?}
+	
+\end{frame}
+
+
+
 
 
 \finalthanksnote{These slides are  available at \\  \href{https://speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}{\nolinkurl{speakerdeck.com/fjhickernell/advances-and-challenges-in-quasi-monte-carlo-software}}}
