@@ -78,6 +78,7 @@
 \newcommand{\mCtheta}{{\mathsf{C}_{\vtheta}}}
 \newcommand{\mCInv}{\mathsf{C}^{-1}}
 \renewcommand{\ty}{\widetilde{y}}
+\renewcommand{\tvy}{\widetilde{\vy}}
 
 %\DeclareMathOperator{\app}{app}
 
@@ -180,7 +181,7 @@ C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K_\vt
 	\end{gather*} 
 \uncover<2->{which leads to the approximation and credible interval:
 \begin{gather*}
-	\hmu = \frac{\ty_1}{n} = \frac 1n \sum_{i=1}^n f(\vx_i) = \text{sample mean}, \qquad \vy = \bigl(f(\vx_1), \ldots, f(\vx_n) \bigr)^T \\
+	\hmu = \frac{\ty_1}{n} = \frac 1n \sum_{i=1}^n f(\vx_i) = \text{sample mean}, \qquad \vy = \bigl(f(\vx_1), \ldots, f(\vx_n) \bigr)^T, \quad \tvy = \mV^H \vy\\
 \Prob \bigl [\abs{\mu - \hmu} \le \ERR\bigr ] = 99\%,  \qquad 
 \ERR = \frac{2.58}{n} \sqrt{ \sum_{i = \alert{2}}^n \frac{\lvert \ty_i \rvert^2}{\lambda_{\vtheta i}} \left(1 - \frac{n}{\lambda_{\vtheta 1}} \right)} 
 \only<3>{ \\
@@ -223,9 +224,10 @@ We aim to provide software that
 \noindent\begin{minipage}{0.47\textwidth}
 \begin{lstlisting}[style=Python]
 d = 5; tol = 1e-2
-lattice = Lattice(dimension=d, order='linear')
+lattice = Lattice(dimension = d, order = 'linear')
 integrand = Keister(lattice)
-solution,data = CubBayesLatticeG(integrand, abs_tol=tol, ptransform = 'none').integrate()
+stop_crit = CubBayesLatticeG(integrand, abs_tol = tol, ptransform = 'none')
+solution,data = stop_crit.integrate()
 print(data)
 \end{lstlisting}
 \end{minipage} 
@@ -259,7 +261,7 @@ t_final = 1; call_put = 'call'
 mean_type = 'arithmetic'
 d = 4; abs_tol = .01
 integrand = AsianOption(Lattice(d, order = 'linear'), volatility, start_price, strike_price, interest_rate, t_final, call_put, mean_type)
-solution,data = CubBayesLatticeG(integrand,abs_tol=abs_tol).integrate()
+solution,data = CubBayesLatticeG(integrand, abs_tol = abs_tol).integrate()
 print(data)
 \end{lstlisting}
 \end{minipage} 
@@ -344,7 +346,7 @@ Should we be concerned?
 	
 	\item Tuning the hyperparameters can add significant computational load
 	
-	\item Challenges of speeding the computation and finding the right kernels or hyperparameters still remain
+	\item Challenges of speeding up the computation and finding the right kernels or hyperparameters still remain
 \end{itemize}
 	
 \end{frame}
