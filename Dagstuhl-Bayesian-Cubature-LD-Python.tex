@@ -92,7 +92,7 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 \renewcommand{\OffTitleLength}{-7ex}
 \setlength{\FJHThankYouMessageOffset}{-8ex}
 \title{Bayesian Cubature with Low Discrepancy Sequences in QMCPy}
-\author[]{Fred J. Hickernell, Jagadeeswaran Rathinavel, \& Aleksei Sorokin}
+\author[]{Fred J. Hickernell, Jagadeeswaran Rathinavel \& Aleksei Sorokin}
 \institute{Department of Applied Mathematics \qquad
 	Center for Interdisciplinary Scientific Computation \\  Illinois Institute of Technology \quad
 	\href{mailto:hickernell@iit.edu}{\url{hickernell@iit.edu}} \quad
@@ -127,9 +127,9 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 	
 	\vspace{-5ex}
 		\[
-	\mu :=  \int_{[0,1]^d} f(\vx) \, \dif \vx = ? \qquad \hmu_n = \text{function of } f(\vx_1),  \ldots, f(\vx_n) \qquad \text{Want } \Prob[\abs{\mu - \mu_n} \le \varepsilon] = 99\% 
+	\mu :=  \int_{[0,1]^d} f(\vx) \, \dif \vx = ? \qquad \hmu_n = \text{function of } f(\vx_1),  \ldots, f(\vx_n) \qquad \text{Want } \Prob[\abs{\mu - \hmu_n} \le \varepsilon] \ge 99\% 
 	\]
-	
+	\vspace{-3ex}
 	\begin{itemize}
 		\item Assume we are \alert<1>{handed} $f \sim \GP(m,s^2 C_\vtheta)$
 		\item<3-> \alert<3>{Choose $C_\vtheta$ and $\vx_1, \vx_2, \ldots$ for a \emph{fast} eigenvector-eigenvalue decomposition of the Gram matrix $\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n$}; this is a \alert<3>{practical} choice, rather than informed by $f$  (see also Kanagawa, Sh\"afer, Wenger)
@@ -165,7 +165,7 @@ C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K_\vt
 	
 	\vspace{-7ex}
 	\[
-	C_\vtheta(\vt,\vx) = K_\vtheta(\vt \underbrace{\ominus}_{\substack{\text{digitwise}\\ \text{subtraction}}} \vx ), \qquad \text{e.g., }K_\vtheta(\vt) = \prod_{k=1}^d\bigl[ 1+ \eta_k \underbrace{\omega(t_k)}_{\text{explicit}}\bigr], \quad \vtheta = (r,\veta)
+	C_\vtheta(\vt,\vx) = K_\vtheta(\vt \underbrace{\ominus}_{\substack{\text{digitwise}\\ \text{subtraction}}} \vx ), \qquad \text{e.g., }K_\vtheta(\vt) = \prod_{k=1}^d\bigl[ 1+ \eta_k \underbrace{\omega_r(t_k)}_{\text{explicit}}\bigr], \quad \vtheta = (r,\veta)
 	\]	
 }
 
