@@ -15,6 +15,7 @@
 	calc,
 	colortbl,
 	siunitx,
+	soul,
  	graphicx}
 \usepackage[usenames]{xcolor}
 \usepackage[giveninits=false,backend=biber,style=nature, maxcitenames =10, mincitenames=9,mincrossrefs=10]{biblatex}
@@ -121,20 +122,20 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 
 \section{Introduction}
 
-\begin{frame}{Our take on Bayesian Cubature \cite{HicJag18b,RatHic19a,Jag19a,JagHic22a}}
+\begin{frame}{Our take on Bayesian \st{Quadrature} Cubature \cite{HicJag18b,RatHic19a,Jag19a,JagHic22a}}
 	
 	\vspace{-5ex}
 		\[
-	\mu :=  \int_{[0,1]^d} f(\vx) \, \dif \vx = ? \qquad \hmu_n = \text{function of } f(\vx_1),  \ldots, f(\vx_n) \qquad \text{Want } \Prob[\abs{\mu - \mu_n} \le \varepsilon] \ge 99\% 
+	\mu :=  \int_{[0,1]^d} f(\vx) \, \dif \vx = ? \qquad \hmu_n = \text{function of } f(\vx_1),  \ldots, f(\vx_n) \qquad \text{Want } \Prob[\abs{\mu - \mu_n} \le \varepsilon] = 99\% 
 	\]
 	
 	\begin{itemize}
-		\item Assume we are handed $f \sim \GP(m,s^2 C_\vtheta)$
+		\item Assume we are \alert<1>{handed} $f \sim \GP(m,s^2 C_\vtheta)$
 		\item<3-> \alert<3>{Choose $C_\vtheta$ and $\vx_1, \vx_2, \ldots$ for a \emph{fast} eigenvector-eigenvalue decomposition of the Gram matrix $\mC_\vtheta = \bigl(C_\vtheta(\vx_i, \vx_j)\bigr)_{i,j=1}^n$}; this is a \alert<3>{practical} choice, rather than informed by $f$  (see also Kanagawa, Sh\"afer, Wenger)
-		\item Sample $f$ at $\vx_1, \ldots, \vx_n$
+		\item \alert<1>{Sample} $f$ at $\vx_1, \ldots, \vx_n$
 		\item<2-> \alert<2>{Tune the hyperparameters by empirical Bayes so that $f$ is not an \emph{outlier}}
-		\item Construct a credible interval for $\mu$ in terms of the posterior mean $\hmu_n$
-		\item Increase $n$ until the half-width is no greater than $\varepsilon$
+		\item Construct a \alert<1>{credible interval} for $\mu$ in terms of the posterior mean $\hmu_n$
+		\item \alert<1>{Increase $n$} until the half-width is no greater than $\varepsilon$
 		\item<4-> \alert<4>{Implement in software:  GAIL \cite{ChoEtal21a} and QMCPy \cite{QMCPy2020a}} (see also Naslidynk, Pleiss, ProbNum)
 	\end{itemize}
 	
@@ -142,7 +143,7 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 
 \section{Matched Data Sites \& Covariance Kernels}
 
-\begin{frame}{Low Discrepancy (LD) Sequences}
+\begin{frame}{Low Discrepancy (LD) Sequences for Quasi-Monte Carlo (QMC) Methods}
 	
 \vspace{-3ex}
 	
@@ -150,7 +151,7 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 	
 	\includegraphics[width = \textwidth]{figures/dd_IID_Uniform.eps}
 }
-\only<2>{LD lattice sequences are more even than IID
+\only<2>{LD lattice sequences \cite{SloJoe94,Lem09a,DicEtal14a} are more even than IID and give faster convergence
 	\includegraphics[width = \textwidth]{figures/dd_Lattice.eps}
 	
 	\vspace{-7ex}
@@ -158,7 +159,7 @@ Bayesian cubature proceeds by constructing  credible intervals for the integral 
 C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K_\vtheta(\vt) = \prod_{k=1}^d\bigl[ 1  +  \eta_k  (-1)^{r+1} \underbrace{B_{2r}(t_k)}_{\substack{\text{Bernoulli}\\ \text{polynomial}}} \bigr], \quad \vtheta = (r,\veta)
 \]	
 }
-\only<3>{LD digital sequences (such as Sobol') are more even than IID
+\only<3>{LD digital sequences \cite{Nie92,DicPil10a,DicEtal14a} (e.g., Sobol') are more even than IID  and give faster convergence
 	\includegraphics[width = \textwidth]{figures/dd_Sobol.eps}
 	
 	\vspace{-7ex}
@@ -179,7 +180,7 @@ C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K_\vt
 	\end{gather*} 
 \uncover<2->{which leads to the approximation and credible interval:
 \begin{gather*}
-	\hmu = \frac{\ty_1}{n} = \frac 1n \sum_{i=1}^n f(\vx_i) = \text{sample mean of function values}, \qquad \vy = \bigl(f(\vx_1), \ldots, f(\vx_n) \bigr)^T \\
+	\hmu = \frac{\ty_1}{n} = \frac 1n \sum_{i=1}^n f(\vx_i) = \text{sample mean}, \qquad \vy = \bigl(f(\vx_1), \ldots, f(\vx_n) \bigr)^T \\
 \Prob \bigl [\abs{\mu - \hmu} \le \ERR\bigr ] = 99\%,  \qquad 
 \ERR = \frac{2.58}{n} \sqrt{ \sum_{i = \alert{2}}^n \frac{\lvert \ty_i \rvert^2}{\lambda_{\vtheta i}} \left(1 - \frac{n}{\lambda_{\vtheta 1}} \right)} 
 \only<3>{ \\
@@ -201,9 +202,9 @@ C_\vtheta(\vt,\vx) = K_\vtheta(\vt - \vx \bmod \vone), \qquad \text{e.g., }K_\vt
 		\item GAIL \cite{ChoEtal21a} MATLAB library (born in 2013)
 		\item QMCPy \cite{QMCPy2020a} Python library (born in 2019)
 	\end{itemize}
-Our goals are to provide software that 
+We aim to provide software that 
 \begin{itemize}
-	\item Includes the best (mostly QMC) algorithms available
+	\item Includes the best---mostly quasi-Monte Carlo (QMC)---algorithms available
 	\item Is well-tested
 	\item Is an easy on-ramp for practitioners
 	\item Provides use cases for algorithm developers 
